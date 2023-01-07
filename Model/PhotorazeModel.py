@@ -5,6 +5,7 @@ from PIL import Image
 
 STORAGE_URL = '../storage/'
 
+
 class ImageModel:
     def __init__(self, url, name, tags):
         self.url = url
@@ -17,18 +18,46 @@ class ImageModel:
 
     def save(self):
         self.img.save(STORAGE_URL + self.name)
-        self.cursor.execute(""" INSERT INTO images(name, tags) VALUES(
-                .format(self.name),.format(self.tags))
+        sql = (""" INSERT INTO images(name, tags) VALUES(
+                ?, ?)
                 """)
+        self.cursor.execute(sql, (str(self.name), " ".join(self.tags)))
         self.conn.commit()
         pass
 
     def delete(self):
         os.remove(STORAGE_URL + self.name)
+        sql = ("""
+            DELETE FROM images WHERE name=?
+        """)
+        self.cursor.execute(sql, (str(self.name), ))
+        self.conn.commit()
         pass
+
+    def update(self, utags):
+        sql = ("""
+            UPDATE images
+            SET tags = ?
+            WHERE name = ? 
+        """)
+        self.cursor.execute(sql, (utags, self.name))
+        self.conn.commit()
+        pass
+
+    def read(self):
+        sql = """
+            SELECT tags FROM images WHERE name = ?
+        """
+        tags = self.cursor.execute(sql, (self.name, ))
+        self.conn.commit()
+        records = self.cursor.fetchall()
+        return records
 
     def get_by_tag(self):
         pass
 
     def set_tag(self):
         pass
+
+
+
