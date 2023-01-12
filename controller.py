@@ -99,7 +99,7 @@ def autotag(imgpath):
     # TODO: Send image to get tags from neuralink
 
 
-def get_tags_neuro(tags):
+def set_tags_neuro(tags):
     pass
     # TODO: Get new tags for pic. Replace tag if matched
 
