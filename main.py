@@ -19,7 +19,7 @@ def main():
         choice = input("Enter your choice: ")
         if choice == "6":
             break
-        menu.execute_command(["create", "read", "update", "delete", "search"][int(choice) - 1])
+        menu.execute_command(["create_view", "read_view", "update_view", "delete_view", "search_view"][int(choice) - 1])
 
 
 if __name__ == "__main__":
