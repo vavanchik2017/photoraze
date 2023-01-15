@@ -3,9 +3,10 @@ from PhotorazeView import template_renderer
 from PhotorazeModel import ImageFacade
 from autotag import VGG
 import os.path
+import sys
 import shutil
-
-STORAGE = './storage/'
+sys.setrecursionlimit(2000)
+STORAGE = 'storage/'
 
 
 class Command(ABC):
@@ -47,10 +48,12 @@ class Controller:
         self.facade = ImageFacade()
 
     def get_pics(self):
-        return self.facade.get_all()
+        return self.facade.get_all()[0]
+    def get_pic(self,id):
+        return self.facade.get_image_byid(id)
 
     def add_pic(self, path_to_pic):
-        self.facade.add(name=os.path.basename(path_to_pic)[0], tags=Service.autotag(path_to_pic), path=path_to_pic)
+        self.facade.add(name=os.path.basename(path_to_pic), tags=Service.autotag(path_to_pic), path=path_to_pic)
 
     def update_name(self, idname, name):
         self.facade.update_name(idname, name)
@@ -78,8 +81,8 @@ class Controller:
         else:
             return Service.error()
 
-    def create(self):
-        self.add_pic(Service.path_input())
+    def create(self,file):
+        self.add_pic(file)
 
 
 class Receiver:
@@ -88,7 +91,7 @@ class Receiver:
 
     def create_view(self):
         template_renderer(context={}, template='add_pic.jinja2', cls=True)
-        self.controller.create()
+        self.controller.create(Service.path_input())
 
     def read_view(self):
         images = self.controller.get_pics()

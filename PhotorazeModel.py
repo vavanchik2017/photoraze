@@ -46,11 +46,11 @@ class ImageFacade:
         return str(q)
 
     def get_image_byid(self, id):
-        return session.query(self.image).filter(self.image.id == id)
+        return session.query(self.image).filter(self.image.id == id).first()
 
     def get_image_bytag(self, tag):
         search_request = "%{}%".format(tag)
-        return session.query(self.image).filter(self.image.tags.like(search_request))
+        return session.query(self.image).filter(self.image.tags.like(search_request)).all()
 
     def update_name(self, id, name):
         stmt = (

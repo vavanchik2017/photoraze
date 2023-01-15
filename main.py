@@ -1,3 +1,4 @@
+import sys
 from PhotorazeController import Menu, CreateCommand, ReadCommand, UpdateCommand, DeleteCommand, SearchCommand
 def main():
     menu = Menu()
@@ -8,6 +9,7 @@ def main():
     menu.add_command("search_view", SearchCommand(menu.receiver))
 
     while True:
+        print(sys.getrecursionlimit())
         print("Menu:")
         print("1. Create")
         print("2. Read")

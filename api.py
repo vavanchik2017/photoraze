@@ -1,6 +1,10 @@
 from fastapi import FastAPI, File, UploadFile
-from PhotorazeController import Controller, STORAGE
+import uvicorn
+from PhotorazeController import Controller, STORAGE,Service
 import shutil
+import sys
+import os
+sys.setrecursionlimit(3000)
 app = FastAPI(
     title='photoraze-stock'
 )
@@ -25,4 +29,28 @@ def show(id):
 def addpic(file: UploadFile):
     with open(STORAGE+file.filename,'wb') as buffer:
         shutil.copyfileobj(file.file, buffer)
-        controller.add_pic(file.filename)
+        controller.create(STORAGE + file.filename)
+        return STORAGE+file.filename
+
+@app.get('/search/{request}')
+def searchpic(request):
+    return controller.search(request)
+
+@app.put('/pictures/{id}/edit')
+def editpic(id, name, tags):
+    controller.update_name(id,name)
+    controller.update_tags(id,tags,2)
+
+@app.get('/pictures/{id}/show')
+async def getpic(id):
+    return controller.get_pic(id)
+
+@app.post('/autotag')
+async def getpic(file: UploadFile):
+    with open(STORAGE+file.filename, 'wb') as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        tags = Service.autotag(STORAGE+file.filename)
+        os.remove(STORAGE + file.filename)
+        return tags
+
+
