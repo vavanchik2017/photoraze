@@ -68,6 +68,7 @@ class Controller:
 
     def delete(self, id):
         self.facade.delete(id)
+        return 'deleted'
         # TODO: Add exception/check
 
     def id_input(self):
@@ -168,5 +169,5 @@ class Service:
         pass
 
 # TODO: Доделать апдейт
-
+# TODO: Проверка типов
 # TODO: Перечисление предложенных тегов для пользователя
