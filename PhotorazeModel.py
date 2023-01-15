@@ -58,19 +58,14 @@ class ImageFacade:
             where(self.image.__table__.c.id == id).
             values(name=name)
         )
-        session.execute(stmt)
-        session.commit()
-        session.close()
-
+        self.execute_request(stmt)
     def update_tags(self, id: int, newtags: str):
         stmt = (
             update(self.image.__table__).
             where(self.image.__table__.c.id == id).
             values(tags=newtags)
         )
-        session.execute(stmt)
-        session.commit()
-        session.close()
+        self.execute_request(stmt)
 
     def append_tags(self, id: int, newtags: str):
         stmt = (
@@ -78,7 +73,10 @@ class ImageFacade:
             where(self.image.__table__.c.id == id).
             values(tags=self.image.tags + newtags + ' ')
         )
-        session.execute(stmt)
+        self.execute_request(stmt)
+
+    def execute_request(self, request):
+        session.execute(request)
         session.commit()
         session.close()
 

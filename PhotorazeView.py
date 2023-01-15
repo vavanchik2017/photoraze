@@ -1,5 +1,4 @@
 import os
-
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 env = Environment(
@@ -19,3 +18,4 @@ def template_renderer(context=None, template='default.jinja2', cls=True):
     clean_screen(cls)
     template = env.get_template(template)
     print(template.render(**context))
+

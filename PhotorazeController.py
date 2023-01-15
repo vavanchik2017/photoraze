@@ -44,16 +44,20 @@ class SearchCommand(Command):
 
 
 class Receiver:
+    def __init__(self):
+        self.facade = ImageFacade()
     def add_pic_tags(self, imgname, cls=True):
-        print(imgname)
         template_renderer(context={}, template='add_pic_tags.jinja2', cls=cls)
         tags = Service.autotag(imgname)
-        model_facade = ImageFacade()
-        model_facade.add(name=os.path.basename(imgname)[0], tags=tags, path=imgname)
+        self.facade.add(name=os.path.basename(imgname)[0], tags=tags, path=imgname)
         return 'ok'
 
-    def create(self):
+
+    def create_view(self):
         template_renderer(context={}, template='add_pic.jinja2', cls=True)
+        self.create()
+
+    def create(self):
         imgpath = input()
         if os.path.exists(imgpath):
             self.add_pic_tags(Service.copy(imgpath))
@@ -61,47 +65,53 @@ class Receiver:
             return Service.error()
 
     def read(self):
-        model_facade = ImageFacade()
-        images = model_facade.get_all()
+        images = self.facade.get_all()
         print(images)
         template_renderer(context={'images': images}, template='all_images.jinja2', cls=True)
         input("Для продолжения нажмите enter")
 
-    def search(data=None, cls=True):
-        model_facade = ImageFacade()
-        template_renderer(context={}, template='get_by_tag.jinja2', cls=cls)
-        request = input()
-        tags = model_facade.get_image_bytag(request)
-        template_renderer(context={'results': tags}, template='get_by_tag_2.jinja2', cls=cls)
-        return 'main', None
 
-    def update(self):
-        model_facade = ImageFacade()
+    def search_view(self):
+        template_renderer(context={}, template='get_by_tag.jinja2', cls=True)
+        if self.search():
+            template_renderer(context={'results': self.search()}, template='get_by_tag_2.jinja2', cls=True)
+        else:
+            print('Ничего не найдено')
+
+    def search(self):
+        return self.facade.get_image_bytag(input())
+
+    def update_name(self):
         template_renderer(context={}, template='update_pic_name.jinja2', cls=True)
-        id = input()
+        id = self.idInput()
         template_renderer(context={}, template='update_pic_name_2.jinja2', cls=True)
-        new_name = input()
-        if new_name != '':
-            model_facade.update_name(id, new_name)
+        self.facade.update_name(id, self.nameInput())
+    def update_tags(self,id):
         template_renderer(context={}, template='update_pic_tags.jinja2', cls=True)
         ch = int(input())
         template_renderer(context={}, template='update_pic_tags2.jinja2', cls=True)
         newtag = input()
         if ch == 1:
-            model_facade.append_tags(id, newtag)
+            self.facade.append_tags(id, newtag)
         elif ch == 2:
-            model_facade.update_tags(id, newtag)
+            self.facade.update_tags(id, newtag)
         else:
             pass
+
+    def idInput(self):
+        if self.facade.get_image_byid(input()):
+            return id
+        else:
+            return Service.error()
+    def nameInput(self):
+        return input()
 
         # TODO: Add timestamp
 
     def delete(self):
-        template_renderer(context={}, template='delete_pic.jinja2', cls=True)
-        model_facade = ImageFacade()
-        pic_to_del = input()
-        model_facade.delete(pic_to_del)
-        # TODO: Add exception
+        self.facade.delete(self.idInput())
+        # TODO: Add exception/check
+
 
 
 class Menu:
@@ -121,7 +131,7 @@ class Service:
     def copy(cls, img):
         new_location = shutil.copy(img, STORAGE)
         return new_location
-
+    @classmethod
     def error(cls):
         template_renderer(context={}, template='error.jinja2', cls=cls)
         return None
@@ -136,6 +146,5 @@ class Service:
         pass
 
 # TODO: Доделать апдейт
-
 
 # TODO: Перечисление предложенных тегов для пользователя

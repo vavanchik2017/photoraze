@@ -22,6 +22,5 @@ class VGG:
         return decode_predictions(preds, self.count)[0][0:5]
 
     def gettag(self, img_path):
-        tags = self.predict(img_path)
-        result = [tags[c][1] for c in range(0, 5)]
+        result = [self.predict(img_path)[c][1] for c in range(0, 5)]
         return ', '.join(result)
