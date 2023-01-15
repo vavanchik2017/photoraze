@@ -19,27 +19,27 @@ class Command(ABC):
 
 class CreateCommand(Command):
     def execute(self):
-        self.receiver.create()
+        self.receiver.create_view()
 
 
 class ReadCommand(Command):
     def execute(self):
-        self.receiver.read()
+        self.receiver.read_view()
 
 
 class UpdateCommand(Command):
     def execute(self):
-        self.receiver.update()
+        self.receiver.update_view()
 
 
 class DeleteCommand(Command):
     def execute(self):
-        self.receiver.delete()
+        self.receiver.delete_view()
 
 
 class SearchCommand(Command):
     def execute(self):
-        self.receiver.search()
+        self.receiver.search_view()
 
 
 class Controller:
@@ -71,7 +71,8 @@ class Controller:
         # TODO: Add exception/check
 
     def id_input(self):
-        if self.facade.get_image_byid(input()):
+        id = input()
+        if self.facade.get_image_byid(id):
             return id
         else:
             return Service.error()
@@ -108,7 +109,7 @@ class Receiver:
         template_renderer(context={}, template='update_pic_name.jinja2', cls=True)
         id = self.controller.id_input()
         template_renderer(context={}, template='update_pic_name_2.jinja2', cls=True)
-        self.controller.update_name(id, Service.name_input())
+        self.controller.update_name(id, input())
         return id
 
     def update_tags_view(self, id):
@@ -116,7 +117,7 @@ class Receiver:
         ch = int(input())
         template_renderer(context={}, template='update_pic_tags2.jinja2', cls=True)
         newtag = input()
-        self.update_tags(id, newtag, ch)
+        self.controller.update_tags(id, newtag, ch)
 
     def delete_view(self):
         template_renderer(context={}, template='delete_pic.jinja2', cls=True)
@@ -146,9 +147,6 @@ class Service:
         else:
             return Service.error()
 
-    @classmethod
-    def name_input(cls):
-        return input()
 
     @classmethod
     def copy(cls, img):

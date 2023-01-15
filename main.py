@@ -1,11 +1,11 @@
 from PhotorazeController import Menu, CreateCommand, ReadCommand, UpdateCommand, DeleteCommand, SearchCommand
 def main():
     menu = Menu()
-    menu.add_command("create", CreateCommand(menu.receiver))
-    menu.add_command("read", ReadCommand(menu.receiver))
-    menu.add_command("update", UpdateCommand(menu.receiver))
-    menu.add_command("delete", DeleteCommand(menu.receiver))
-    menu.add_command("search", SearchCommand(menu.receiver))
+    menu.add_command("create_view", CreateCommand(menu.receiver))
+    menu.add_command("read_view", ReadCommand(menu.receiver))
+    menu.add_command("update_view", UpdateCommand(menu.receiver))
+    menu.add_command("delete_view", DeleteCommand(menu.receiver))
+    menu.add_command("search_view", SearchCommand(menu.receiver))
 
     while True:
         print("Menu:")
