@@ -29,7 +29,7 @@ def delete(id):
 def addpic(file: UploadFile):
     with open(STORAGE+file.filename,'wb') as buffer:
         shutil.copyfileobj(file.file, buffer)
-        controller.create(STORAGE + file.filename)
+        controller.create(STORAGE+file.filename)
         return STORAGE+file.filename
 
 @app.get('/search/{request}')
@@ -45,7 +45,7 @@ def editpic(id, name, tags):
 async def getpic(id):
     return controller.get_pic(id)
 
-@app.get('/autotag')
+@app.post('/autotag')
 async def getpic(file: UploadFile):
     with open(STORAGE+file.filename, 'wb') as buffer:
         shutil.copyfileobj(file.file, buffer)

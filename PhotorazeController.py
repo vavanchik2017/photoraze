@@ -48,7 +48,7 @@ class Controller:
         self.facade = ImageFacade()
 
     def get_pics(self):
-        return self.facade.get_all()[0]
+        return self.facade.get_all()
     def get_pic(self,id):
         return self.facade.get_image_byid(id)
 

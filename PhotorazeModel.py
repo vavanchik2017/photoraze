@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Table
 from sqlalchemy import create_engine, delete, update
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine('sqlite:///photoraze1.sqlite', echo=False)
+engine = create_engine('sqlite:///photoraze.sqlite', echo=False)
 Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
@@ -32,53 +32,70 @@ class ImageFacade:
         return img
 
     def delete(self, id):
+        session = Session()
         delpic = session.query(self.image).filter(self.image.__table__.c.id == id).one()
         session.delete(delpic)
         session.commit()
         session.close()
 
     def get_all(self):
-        return session.query(self.image).all()
+        t = session.query(self.image).all()
+        return t
 
     def get_tags(self, id: int):
+        session = Session()
         q = session.query(self.image).filter_by(id=id).first()
-        print(q.tags)
+        session.close()
         return str(q)
 
     def get_image_byid(self, id):
-        return session.query(self.image).filter(self.image.id == id).first()
-
+        session = Session()
+        resp=session.query(self.image).filter(self.image.id == id).first()
+        session.close()
+        return resp
     def get_image_bytag(self, tag):
         search_request = "%{}%".format(tag)
-        return session.query(self.image).filter(self.image.tags.like(search_request)).all()
-
+        session = Session()
+        resp=session.query(self.image).filter(self.image.tags.like(search_request)).all()
+        session.close()
+        return resp
     def update_name(self, id, name):
+        session = Session()
         stmt = (
             update(self.image.__table__).
             where(self.image.__table__.c.id == id).
             values(name=name)
         )
-        self.execute_request(stmt)
+        session.execute(stmt)
+        session.commit()
+        session.close()
     def update_tags(self, id: int, newtags: str):
+        session = Session()
         stmt = (
             update(self.image.__table__).
             where(self.image.__table__.c.id == id).
             values(tags=newtags)
         )
-        self.execute_request(stmt)
+        session.execute(stmt)
+        session.commit()
+        session.close()
 
     def append_tags(self, id: int, newtags: str):
+        session = Session()
         stmt = (
             update(self.image.__table__).
             where(self.image.__table__.c.id == id).
             values(tags=self.image.tags + newtags + ' ')
         )
-        self.execute_request(stmt)
+        session.execute(stmt)
+        session.commit()
+        session.close()
 
     def execute_request(self, request):
         session.execute(request)
         session.commit()
         session.close()
+
 
 
 Base.metadata.create_all(engine)
