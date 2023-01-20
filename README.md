@@ -4,6 +4,7 @@
 upd: Сдан
 
 TODO:
+0) Test and GH-actions
 1) Del CLI
 2) API
 3) Make front better than one page :_)
