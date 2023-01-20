@@ -1,5 +1,5 @@
 from fastapi import FastAPI, File, UploadFile
-import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 from PhotorazeController import Controller, STORAGE,Service
 import shutil
 import sys
@@ -9,7 +9,20 @@ app = FastAPI(
     title='photoraze-stock'
 )
 controller = Controller()
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get('/')
 def mainpage():

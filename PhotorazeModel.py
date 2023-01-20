@@ -8,7 +8,6 @@ Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
 
-
 class ImageModel(Base):
     __tablename__ = "images"
     id = Column(Integer, primary_key=True)
@@ -29,7 +28,7 @@ class ImageFacade:
         session.add(img)
         session.commit()
         session.close()
-        return img
+
 
     def delete(self, id):
         session = Session()
@@ -40,6 +39,7 @@ class ImageFacade:
 
     def get_all(self):
         t = session.query(self.image).all()
+        session.close()
         return t
 
     def get_tags(self, id: int):
